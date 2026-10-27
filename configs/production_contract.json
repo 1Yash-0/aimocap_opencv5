@@ -1,0 +1,24 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "name": "AIMoCap Production Acceptance Contract v1.1",
+  "version": "1.1.0",
+  "tolerances": {
+    "nominal_floor_penetration_p95_max_cm": 1.25,
+    "occlusion_floor_penetration_p95_max_cm": 1.55,
+    "pelvis_p95_error_max_cm": 3.0,
+    "camera_policy": {
+      "nominal_min_cameras": 4,
+      "degraded_min_cameras": 3,
+      "reject_below_cameras": 3
+    },
+    "drift_slope_max_cm_per_1000_frames": 0.2,
+    "streaming_p95_latency_max_ms": 33.33,
+    "streaming_p99_latency_max_ms": 40.0,
+    "bvh_roundtrip_max_error_mm": 0.01,
+    "gpu_determinism_max_variance_mm": 0.0001,
+    "defensive_pipeline": {
+      "nan_inf_rejection_rate_pct": 100.0,
+      "post_recovery_error_max_cm": 3.0
+    }
+  }
+}

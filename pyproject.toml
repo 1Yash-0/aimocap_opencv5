@@ -1,0 +1,66 @@
+[build-system]
+requires = ["setuptools>=77.0.3"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "aimocap"
+version = "0.5.0"
+description = "Markerless multi-camera motion capture: OpenCV 5 calibration and inference, robust triangulation, BVH export."
+readme = "README.md"
+license = "LicenseRef-AIMoCap-Evaluation-Only"
+license-files = ["LICENSE", "THIRD_PARTY_NOTICES.md"]
+authors = [{ name = "Yash Verdhan" }]
+requires-python = ">=3.11"
+# Base runtime. ONNX Runtime is not a base dependency: install exactly one of the
+# `cpu` or `gpu` extras to provide it for 2D pose inference.
+dependencies = [
+    "opencv-python==5.0.0.93",
+    "numpy==2.5.3",
+    "scipy==1.18.1",
+    "pillow==12.3.0",
+    "matplotlib==3.11.2",
+    "imageio-ffmpeg==0.6.0",
+]
+
+[project.optional-dependencies]
+# ONNX Runtime on CPU. Do not combine with the `gpu` extra.
+cpu = [
+    "onnxruntime==1.20.1",
+]
+# ONNX Runtime with the CUDA 12 execution provider and the matching CUDA/cuDNN runtime wheels.
+# Do not combine with the `cpu` extra.
+gpu = [
+    "onnxruntime-gpu==1.20.2",
+    "nvidia-cuda-runtime-cu12==12.9.79",
+    "nvidia-cuda-nvrtc-cu12==12.9.86",
+    "nvidia-cublas-cu12==12.9.2.10",
+    "nvidia-cufft-cu12==11.4.1.4",
+    "nvidia-cudnn-cu12==9.27.0.42",
+    "nvidia-nvjitlink-cu12==12.9.86",
+]
+# Web-service dependencies. No service module is included in this repository yet.
+service = [
+    "fastapi==0.141.1",
+    "uvicorn[standard]==0.53.0",
+    "jinja2==3.1.6",
+    "python-multipart==0.0.32",
+    "boto3==1.43.118",
+    "httpx==0.28.1",
+]
+dev = [
+    "pytest==9.1.1",
+    "ruff==0.17.2",
+]
+
+[project.scripts]
+aimocap = "aimocap.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["aimocap*"]
+
+[tool.setuptools.package-data]
+"aimocap.triangulate" = ["confidence3d.json"]
+"aimocap.pose" = ["calibration/*.json"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

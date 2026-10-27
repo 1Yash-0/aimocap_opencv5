@@ -1,0 +1,399 @@
+{
+  "corpus_name": "wp01_cli_quality_baseline",
+  "corpus_version": "1.0.0",
+  "selection_rules": {
+    "window_frames": 300,
+    "stride_frames": 300,
+    "scan_range_global": [
+      150,
+      1950
+    ],
+    "min_pelvis_coverage": 0.8,
+    "fps": 29.97002997002997,
+    "rules": {
+      "calm": "min pelvis_mean_speed_mm_s",
+      "fast_arms": "max wrist_p95_speed_mm_s",
+      "turn": "max pelvis_yaw_change_deg",
+      "legs": "max ankle_p95_speed_mm_s"
+    },
+    "method": "scripts/run_cli_quality_baseline.py select (CPU-only GT scan via aimocap.data.panoptic)",
+    "notes": [
+      "pose2 has no hdVideos on disk (calibration + GT only); excluded from run cases.",
+      "pose3 ships only 4 complete videos (00_03, 00_04, 00_24, 00_28); partial .part files excluded.",
+      "pose3 usable clip range is conservatively [150, 450): inside the sync_frames-verified range. Pixel comparison of video frames vs sync_frames jpgs was inconclusive (static scene), so extension beyond global 449 is NOT assumed.",
+      "pose1 turn/legs rules coincided at global 1050; the turn-flavoured case is kept on pose1 and the legs-flavoured case on pose3, so every run case has a distinct window.",
+      "ALIGNMENT CORRECTION 2026-10-04: trim videos start at global frame 0 (not 150 as previously assumed). global_start_frame values corrected to the ACTUAL det coverage of the frozen artifacts (calm 300, fast_arms 1500, turn 900, legs 0, narrow 1500). Evidence: 4-case GT-anchored alignment scan (sharp minima at -150) + 3D MPJPE 26.6mm vs 160.3mm at corrected start."
+    ]
+  },
+  "cases": [
+    {
+      "case_id": "pose1_calm",
+      "kind": "controlled_panoptic",
+      "status": "active",
+      "sequence": "171204_pose1",
+      "sequence_dir": "data/panoptic/171204_pose1",
+      "cameras": [
+        "00_11",
+        "00_12",
+        "00_23"
+      ],
+      "camera_global_starts": {
+        "00_11": 0,
+        "00_12": 0,
+        "00_23": 0
+      },
+      "clip_alignment": {
+        "assumption": "local frame 0 == global 150 for all pose1 hd videos",
+        "basis": "videos are 1800-frame trims matching the historical canonical OFFSET=150/NFRAMES=1800 region",
+        "status": "verified_by_sync_probe_and_gt_alignment",
+        "verification": "pose1_calm: multipose source_frame_indices 300..599 = global 450..749 as designed; GT MPJPE median 52.9mm confirms alignment"
+      },
+      "global_start_frame": 300,
+      "num_frames": 300,
+      "fps": 29.97002997002997,
+      "units": {
+        "gt": "mm_internal",
+        "skeleton3d": "read_from_artifact",
+        "mpjpe": "mm"
+      },
+      "coordinate_frames": {
+        "gt": "internal_y_up_right_handed_z_back",
+        "skeleton3d": "read_from_artifact"
+      },
+      "axes": {
+        "perm": [
+          0,
+          1,
+          2
+        ],
+        "flip": [
+          1,
+          1,
+          1
+        ],
+        "status": "verified_by_gt_mpjpe_comparison",
+        "verification": "pose1_calm skeleton3d_raw vs GT: identity MPJPE median 52.9mm vs y/z-flipped 1919.8mm"
+      },
+      "expected_artifacts": [
+        "ordinary_motion"
+      ],
+      "selection_stats": {
+        "pelvis_finite_fraction": 1.0,
+        "pelvis_mean_speed_mm_s": 109.98801325291387,
+        "wrist_p95_speed_mm_s": 2343.4753416801495,
+        "wrist_max_speed_mm_s": 2958.9904757285144,
+        "ankle_p95_speed_mm_s": 54.41485459204375,
+        "ankle_max_speed_mm_s": 224.98321114454325,
+        "pelvis_yaw_change_deg": 299.90947886622695
+      },
+      "stage_flags": {},
+      "alignment_correction": {
+        "previous_global_start_frame": 450,
+        "corrected_global_start_frame": 300,
+        "basis": "GT-anchored alignment scan: sharp minimum at det(k)~GT(declared-150+k) in all 4 runnable cases; 3D MPJPE pose1_calm 26.6mm at start=300 vs 160.3mm at declared 450; trim videos verified to start at global frame 0 (camera_global_starts was 150, an assumption)",
+        "corrected": "2026-10-04"
+      }
+    },
+    {
+      "case_id": "pose1_fast_arms",
+      "kind": "controlled_panoptic",
+      "status": "active",
+      "sequence": "171204_pose1",
+      "sequence_dir": "data/panoptic/171204_pose1",
+      "cameras": [
+        "00_11",
+        "00_12",
+        "00_23"
+      ],
+      "camera_global_starts": {
+        "00_11": 0,
+        "00_12": 0,
+        "00_23": 0
+      },
+      "clip_alignment": {
+        "assumption": "local frame 0 == global 150 for all pose1 hd videos",
+        "basis": "videos are 1800-frame trims matching the historical canonical OFFSET=150/NFRAMES=1800 region",
+        "status": "verified_by_sync_probe_and_gt_alignment",
+        "verification": "pose1_calm: multipose source_frame_indices 300..599 = global 450..749 as designed; GT MPJPE median 52.9mm confirms alignment"
+      },
+      "global_start_frame": 1500,
+      "num_frames": 300,
+      "fps": 29.97002997002997,
+      "units": {
+        "gt": "mm_internal",
+        "skeleton3d": "read_from_artifact",
+        "mpjpe": "mm"
+      },
+      "coordinate_frames": {
+        "gt": "internal_y_up_right_handed_z_back",
+        "skeleton3d": "read_from_artifact"
+      },
+      "axes": {
+        "perm": [
+          0,
+          1,
+          2
+        ],
+        "flip": [
+          1,
+          1,
+          1
+        ],
+        "status": "verified_by_gt_mpjpe_comparison",
+        "verification": "pose1_calm skeleton3d_raw vs GT: identity MPJPE median 52.9mm vs y/z-flipped 1919.8mm"
+      },
+      "expected_artifacts": [
+        "faster_limb_motion"
+      ],
+      "selection_stats": {
+        "pelvis_finite_fraction": 1.0,
+        "pelvis_mean_speed_mm_s": 320.5199050169877,
+        "wrist_p95_speed_mm_s": 2612.082565018757,
+        "wrist_max_speed_mm_s": 3425.46505193534,
+        "ankle_p95_speed_mm_s": 2141.161222213888,
+        "ankle_max_speed_mm_s": 2805.9463564170283,
+        "pelvis_yaw_change_deg": 792.9415306654683
+      },
+      "stage_flags": {},
+      "alignment_correction": {
+        "previous_global_start_frame": 1650,
+        "corrected_global_start_frame": 1500,
+        "basis": "GT-anchored alignment scan: sharp minimum at det(k)~GT(declared-150+k) in all 4 runnable cases; 3D MPJPE pose1_calm 26.6mm at start=300 vs 160.3mm at declared 450; trim videos verified to start at global frame 0 (camera_global_starts was 150, an assumption)",
+        "corrected": "2026-10-04"
+      }
+    },
+    {
+      "case_id": "pose1_turn",
+      "kind": "controlled_panoptic",
+      "status": "active",
+      "sequence": "171204_pose1",
+      "sequence_dir": "data/panoptic/171204_pose1",
+      "cameras": [
+        "00_11",
+        "00_12",
+        "00_23"
+      ],
+      "camera_global_starts": {
+        "00_11": 0,
+        "00_12": 0,
+        "00_23": 0
+      },
+      "clip_alignment": {
+        "assumption": "local frame 0 == global 150 for all pose1 hd videos",
+        "basis": "videos are 1800-frame trims matching the historical canonical OFFSET=150/NFRAMES=1800 region",
+        "status": "verified_by_sync_probe_and_gt_alignment",
+        "verification": "pose1_calm: multipose source_frame_indices 300..599 = global 450..749 as designed; GT MPJPE median 52.9mm confirms alignment"
+      },
+      "global_start_frame": 900,
+      "num_frames": 300,
+      "fps": 29.97002997002997,
+      "units": {
+        "gt": "mm_internal",
+        "skeleton3d": "read_from_artifact",
+        "mpjpe": "mm"
+      },
+      "coordinate_frames": {
+        "gt": "internal_y_up_right_handed_z_back",
+        "skeleton3d": "read_from_artifact"
+      },
+      "axes": {
+        "perm": [
+          0,
+          1,
+          2
+        ],
+        "flip": [
+          1,
+          1,
+          1
+        ],
+        "status": "verified_by_gt_mpjpe_comparison",
+        "verification": "pose1_calm skeleton3d_raw vs GT: identity MPJPE median 52.9mm vs y/z-flipped 1919.8mm"
+      },
+      "expected_artifacts": [
+        "turning",
+        "high_ankle_speed"
+      ],
+      "selection_stats": {
+        "pelvis_finite_fraction": 1.0,
+        "pelvis_mean_speed_mm_s": 354.13772983567793,
+        "wrist_p95_speed_mm_s": 1185.51592039009,
+        "wrist_max_speed_mm_s": 1659.322953643847,
+        "ankle_p95_speed_mm_s": 3458.4108593837727,
+        "ankle_max_speed_mm_s": 4739.074775458634,
+        "pelvis_yaw_change_deg": 1005.083826634783
+      },
+      "stage_flags": {},
+      "alignment_correction": {
+        "previous_global_start_frame": 1050,
+        "corrected_global_start_frame": 900,
+        "basis": "GT-anchored alignment scan: sharp minimum at det(k)~GT(declared-150+k) in all 4 runnable cases; 3D MPJPE pose1_calm 26.6mm at start=300 vs 160.3mm at declared 450; trim videos verified to start at global frame 0 (camera_global_starts was 150, an assumption)",
+        "corrected": "2026-10-04"
+      }
+    },
+    {
+      "case_id": "pose3_legs",
+      "kind": "controlled_panoptic",
+      "status": "active",
+      "sequence": "171204_pose3",
+      "sequence_dir": "data/panoptic/171204_pose3",
+      "cameras": [
+        "00_03",
+        "00_04",
+        "00_24"
+      ],
+      "camera_global_starts": {
+        "00_03": 0,
+        "00_04": 0,
+        "00_24": 0
+      },
+      "clip_alignment": {
+        "assumption": "local frame 0 == global 150 for the pose3 mp4s",
+        "basis": "sync_frames sidecars name global frames 150..449 for the same cameras; videos are 450-frame trims",
+        "status": "to_be_verified_by_panoptic_sync_probe"
+      },
+      "global_start_frame": 0,
+      "num_frames": 300,
+      "fps": 29.97002997002997,
+      "units": {
+        "gt": "mm_internal",
+        "skeleton3d": "read_from_artifact",
+        "mpjpe": "mm"
+      },
+      "coordinate_frames": {
+        "gt": "internal_y_up_right_handed_z_back",
+        "skeleton3d": "read_from_artifact"
+      },
+      "axes": {
+        "perm": [
+          0,
+          1,
+          2
+        ],
+        "flip": [
+          1,
+          1,
+          1
+        ],
+        "status": "verified_by_gt_mpjpe_comparison",
+        "verification": "pose1_calm skeleton3d_raw vs GT: identity MPJPE median 52.9mm vs y/z-flipped 1919.8mm"
+      },
+      "expected_artifacts": [
+        "lower_body_motion",
+        "foot_motion"
+      ],
+      "selection_stats": {
+        "pelvis_finite_fraction": 1.0,
+        "pelvis_mean_speed_mm_s": 198.87467717051342,
+        "wrist_p95_speed_mm_s": 1165.0880094147162,
+        "wrist_max_speed_mm_s": 2646.9271121124316,
+        "ankle_p95_speed_mm_s": 1060.3768699212017,
+        "ankle_max_speed_mm_s": 3013.8304885210205,
+        "pelvis_yaw_change_deg": 321.52808619323554
+      },
+      "stage_flags": {},
+      "alignment_correction": {
+        "previous_global_start_frame": 150,
+        "corrected_global_start_frame": 0,
+        "basis": "GT-anchored alignment scan: sharp minimum at det(k)~GT(declared-150+k) in all 4 runnable cases; 3D MPJPE pose1_calm 26.6mm at start=300 vs 160.3mm at declared 450; trim videos verified to start at global frame 0 (camera_global_starts was 150, an assumption)",
+        "corrected": "2026-10-04"
+      }
+    },
+    {
+      "case_id": "pose1_narrow_hard",
+      "kind": "controlled_panoptic",
+      "status": "blocked_data",
+      "sequence": "171204_pose1",
+      "sequence_dir": "data/panoptic/171204_pose1",
+      "cameras": [
+        "00_00",
+        "00_01",
+        "00_02"
+      ],
+      "camera_global_starts": {
+        "00_00": 0,
+        "00_01": 0,
+        "00_02": 0
+      },
+      "clip_alignment": {
+        "assumption": "unrunnable: container timestamps structurally broken",
+        "basis": "multipose SyncContractError 32.4 s (global_start 150) and 37.4 s (global_start 0); h264 NAL corruption warnings; fail-closed validation has no override flag. Sync manifest itself verifies (pure math).",
+        "status": "blocked_data"
+      },
+      "global_start_frame": 1500,
+      "num_frames": 300,
+      "fps": 29.97002997002997,
+      "units": {
+        "gt": "mm_internal",
+        "skeleton3d": "read_from_artifact",
+        "mpjpe": "mm"
+      },
+      "coordinate_frames": {
+        "gt": "internal_y_up_right_handed_z_back",
+        "skeleton3d": "read_from_artifact"
+      },
+      "axes": {
+        "perm": [
+          0,
+          1,
+          2
+        ],
+        "flip": [
+          1,
+          1,
+          1
+        ],
+        "status": "verified_by_gt_mpjpe_comparison",
+        "verification": "pose1_calm skeleton3d_raw vs GT: identity MPJPE median 52.9mm vs y/z-flipped 1919.8mm"
+      },
+      "expected_artifacts": [
+        "hard_view_proxy",
+        "faster_limb_motion"
+      ],
+      "selection_stats": {
+        "pelvis_finite_fraction": 1.0,
+        "pelvis_mean_speed_mm_s": 320.5199050169877,
+        "wrist_p95_speed_mm_s": 2612.082565018757,
+        "wrist_max_speed_mm_s": 3425.46505193534,
+        "ankle_p95_speed_mm_s": 2141.161222213888,
+        "ankle_max_speed_mm_s": 2805.9463564170283,
+        "pelvis_yaw_change_deg": 792.9415306654683,
+        "note": "same window as pose1_fast_arms; the comparison isolates the camera-subset effect"
+      },
+      "stage_flags": {},
+      "alignment_correction": {
+        "previous_global_start_frame": 1650,
+        "corrected_global_start_frame": 1500,
+        "basis": "GT-anchored alignment scan: sharp minimum at det(k)~GT(declared-150+k) in all 4 runnable cases; 3D MPJPE pose1_calm 26.6mm at start=300 vs 160.3mm at declared 450; trim videos verified to start at global frame 0 (camera_global_starts was 150, an assumption)",
+        "corrected": "2026-10-04"
+      }
+    },
+    {
+      "case_id": "user_footage_slot",
+      "kind": "user_footage",
+      "status": "pending_user_data",
+      "sequence": null,
+      "sequence_dir": null,
+      "cameras": [
+        "00_00",
+        "00_01"
+      ],
+      "fps": 29.97002997002997,
+      "num_frames": 300,
+      "units": {
+        "gt": "none",
+        "skeleton3d": "read_from_artifact",
+        "mpjpe": "mm"
+      },
+      "coordinate_frames": {
+        "gt": "none",
+        "skeleton3d": "read_from_artifact"
+      },
+      "expected_artifacts": [
+        "real_failing_footage"
+      ],
+      "stage_flags": {},
+      "note": "Reserved category for user-provided real failing captures. No frames invented; excluded from run plans until populated."
+    }
+  ]
+}

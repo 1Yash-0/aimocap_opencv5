@@ -1,0 +1,68 @@
+{
+  "coefficients": [
+    0.37294438922448125,
+    -0.1511733986790713,
+    0.28444893609130484,
+    -0.4597150692104583,
+    0.24111042665317128
+  ],
+  "feature_mean": [
+    1.104024077432407,
+    0.2249288287446749,
+    0.8723829921613357,
+    0.8895597431659508,
+    0.9422941546965237
+  ],
+  "feature_names": [
+    "log_trust_sum",
+    "log_residual_rel",
+    "ray_angle_frac",
+    "log_smoother_innovation_mm",
+    "mean_2d_score"
+  ],
+  "feature_scale": [
+    0.15826611515348174,
+    0.19104167142340367,
+    0.30489418773408694,
+    0.7111388246684752,
+    0.06806484623448239
+  ],
+  "fit": {
+    "body_threshold_mm": 30.0,
+    "features": "P3.3 trust, robust residual / 2D body height, ray angle, P3.5 smoother innovation, calibrated 2D score",
+    "fit_clip": "clip1",
+    "fit_date": "2026-10-22T21:47:16+05:30",
+    "fit_sequence": "171204_pose1",
+    "good_rate_body": 0.7218803194971848,
+    "good_rate_hands": 0.6972006138540509,
+    "hands_threshold_mm": 15.0,
+    "in_sample": {
+      "body_auc": 0.7476657638186475,
+      "body_ece_10bin": 0.05428395161354724,
+      "hands_auc": 0.7962673711173028,
+      "hands_ece_10bin": 0.03575375537982049
+    },
+    "l2": 0.02,
+    "objective": 0.50962888761218,
+    "optimizer_nit": 11,
+    "optimizer_success": true,
+    "samples": 26534,
+    "samples_body": 7637,
+    "samples_hands": 18897,
+    "source_npz": {
+      "diagnostics": "outputs/phase3/p33_soft_20261022/clip1/skeleton3d.npz",
+      "multipose": "outputs/phase3/p30_baseline_20261021/clip1/NEW/multipose.npz",
+      "points": "outputs/phase3/p35_smooth_20261022/clip1/skeleton3d.npz"
+    }
+  },
+  "hand_offset": 0.08029592086308512,
+  "intercept": 0.9071600382312679,
+  "sign_constraints": {
+    "log_residual_rel": "decreasing",
+    "log_smoother_innovation_mm": "decreasing",
+    "log_trust_sum": "increasing",
+    "mean_2d_score": "increasing",
+    "ray_angle_frac": "increasing"
+  },
+  "version": 1
+}

@@ -1,0 +1,103 @@
+{
+  "version": 1,
+  "created": "2026-10-21",
+  "output_root": "outputs/phase3/p30_baseline_20261021",
+  "evaluation_frame": {
+    "skeleton3d": "internal_y_up_right_handed_z_back, meters (cli triangulate default: identity floor, scale_factor 1.0)",
+    "panoptic_gt_conversion": "cm -> m then (x, -y, -z); identity to skeleton3d (verified: clip1 body MPJPE ~20 mm; y/z flip ~2600/280 mm)",
+    "aistpp_gt_conversion": "cm -> m then (x, -y, -z); AIST++ GT and camera extrinsics share the calibrated world frame",
+    "alignment": "none (no per-frame Procrustes; optional one global rigid alignment only if a clip cannot be expressed in the triangulated world frame)"
+  },
+  "clips": {
+    "clip1": {
+      "role": "TUNE",
+      "dataset": "panoptic",
+      "sequence": "171204_pose1",
+      "sequence_dir": "data/panoptic/171204_pose1",
+      "video_dir": "data/panoptic/171204_pose1/hdVideos",
+      "cameras": ["00_11", "00_12", "00_23"],
+      "global_start": 750,
+      "num_frames": 450,
+      "fps": 29.97002997002997,
+      "sync_manifest": "outputs/phase1_2d/new_default_20261017/sync.json",
+      "calibration": "data/panoptic/171204_pose1/calibration_171204_pose1.json",
+      "gt": {
+        "kind": "panoptic",
+        "body_dir": "hdPose3d_stage1_coco19",
+        "hand_dir": "hdHand3d",
+        "face_dir": "hdFace3d",
+        "units": "cm",
+        "joints19_confidence_min": 0.0,
+        "body_mapping": "COCO17_TO_PAN19 = [1,15,17,16,18,3,9,4,10,5,11,6,12,7,13,8,14]",
+        "hand_mapping": "hdHand3d left_hand -> 91:112, right_hand -> 112:133 (21 landmarks, validity > 0)",
+        "face_mapping": "hdFace3d face70 landmarks[0:68] -> 23:91"
+      },
+      "variants": ["NEW", "OLD"],
+      "notes": [
+        "Known 2D issue in camera 00_12 left hand; 3D GT is global so the GT itself is unaffected, but left-hand coverage/error can degrade.",
+        "Panoptic body GT has 19 joints and no foot landmarks; feet 17:23 have no GT."
+      ]
+    },
+    "clip2": {
+      "role": "TEST",
+      "dataset": "panoptic",
+      "sequence": "171026_pose3",
+      "sequence_dir": "data/panoptic/171026_pose3",
+      "video_dir": "data/panoptic/171026_pose3/hdVideos",
+      "cameras": ["00_05", "00_11", "00_30"],
+      "global_start": 2800,
+      "num_frames": 450,
+      "fps": 29.97002997002997,
+      "sync_manifest": "outputs/phase1b/s1_clip2_20261020/refined/sync.json",
+      "calibration": "data/panoptic/171026_pose3/calibration_171026_pose3.json",
+      "gt": {
+        "kind": "panoptic",
+        "body_dir": "hdPose3d_stage1_coco19",
+        "hand_dir": "hdHand3d",
+        "face_dir": "hdFace3d",
+        "units": "cm",
+        "joints19_confidence_min": 0.0,
+        "body_mapping": "COCO17_TO_PAN19 = [1,15,17,16,18,3,9,4,10,5,11,6,12,7,13,8,14]",
+        "hand_mapping": "hdHand3d left_hand -> 91:112, right_hand -> 112:133 (21 landmarks, validity > 0)",
+        "face_mapping": "hdFace3d face70 landmarks[0:68] -> 23:91"
+      },
+      "variants": ["NEW", "OLD"],
+      "notes": [
+        "Panoptic pose3 is the unseen TEST clip (tuning was done on pose1).",
+        "Panoptic body GT has 19 joints and no foot landmarks; feet 17:23 have no GT."
+      ]
+    },
+    "clip3": {
+      "role": "TEST",
+      "dataset": "aistpp",
+      "sequence": "gBR_sFM_cAll_d04_mBR5_ch06",
+      "sequence_dir": "data/aistpp",
+      "video_dir": "data/aistpp/videos",
+      "video_paths": [
+        "data/aistpp/videos/gBR_sFM_c02_d04_mBR5_ch06.mp4",
+        "data/aistpp/videos/gBR_sFM_c05_d04_mBR5_ch06.mp4",
+        "data/aistpp/videos/gBR_sFM_c08_d04_mBR5_ch06.mp4"
+      ],
+      "cameras": ["c02", "c05", "c08"],
+      "global_start": 1,
+      "num_frames": 900,
+      "fps": 60.0,
+      "sync_manifest": "outputs/phase3/p30_baseline_20261021/clip3/prepared/sync.json",
+      "calibration": "outputs/phase3/p30_baseline_20261021/clip3/prepared/calibration_aistpp.json",
+      "gt": {
+        "kind": "aistpp",
+        "loader": "scripts/datasets/aistpp_subset.py:load_aistpp",
+        "key": "keypoints3d_optim",
+        "units": "cm",
+        "joints": "COCO17 0:17",
+        "video_gt_offset": 1
+      },
+      "variants": ["NEW"],
+      "notes": [
+        "AIST++ video frame i corresponds to GT frame i+1. The prepared sync manifest records global_start_frame=1 and window_start_global_frame=1, so global_frame = local_video_frame + 1.",
+        "AIST++ GT has body joints only (COCO17); feet, face and hands have no GT.",
+        "Videos are 1769 frames at 59.94 fps; the run uses the first 900 frames (allowed range: all or first 900)."
+      ]
+    }
+  }
+}

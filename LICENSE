@@ -1,0 +1,40 @@
+AIMoCap Evaluation-Only License
+
+Copyright (c) 2026 Yash Verdhan
+Effective date: October 27, 2026
+
+This license applies to original works owned by Yash Verdhan and included in
+this distribution, including existing code. It does not cover third-party
+materials, and does not claim rights in ideas, methods, algorithms, facts, or
+other material not protected by copyright. Third-party materials remain
+subject to their own licenses and terms; see THIRD_PARTY_NOTICES.md. This
+license does not revoke rights previously granted under other licenses.
+
+EVALUATION PERMISSION. Competition organizers, and judges and reviewers
+authorized by the organizers, may download, copy, run, test, and make
+modifications reasonably necessary for local evaluation solely to evaluate
+the submitted project. They must preserve applicable copyright and license
+notices.
+
+OTHER USE. Except for the evaluation permission above, rights previously
+granted under other licenses, rights in third-party or platform materials,
+and non-waivable rights, no permission is granted to use, modify, reproduce,
+distribute, sublicense, or commercially exploit covered original works.
+Other permission must be obtained separately in writing from the relevant
+rights holder. This notice does not restrict rights to view, access, or fork
+the repository under GitHub's applicable Terms of Service, or alter
+competition submission, evaluation, or other rights granted to the organizers
+or sponsors under the competition submission terms. This repository is
+public; no confidentiality or access-control condition is created by this
+notice.
+
+Nothing in this license limits exceptions or limitations to copyright, or
+other rights that cannot lawfully be waived or restricted.
+
+DISCLAIMER. THE COVERED WORKS ARE PROVIDED "AS IS", WITHOUT WARRANTY OF ANY
+KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND NONINFRINGEMENT. TO
+THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, THE COPYRIGHT HOLDER SHALL NOT
+BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER LIABILITY, WHETHER IN AN ACTION OF
+CONTRACT, TORT, OR OTHERWISE, ARISING FROM, OUT OF, OR IN CONNECTION WITH THE
+WORKS OR THE USE OR OTHER DEALINGS IN THE WORKS.

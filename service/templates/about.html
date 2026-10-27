@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block title %}How it works - AIMoCap{% endblock %}
+{% block content %}
+<h1>How it works</h1>
+
+<section class="section" aria-labelledby="pipeline">
+  <h2 id="pipeline">Pipeline</h2>
+  <ol class="steps">
+    <li><strong>Calibration.</strong> Each phone films a checkerboard. OpenCV 5 finds the corners
+      (<code>findChessboardCorners</code>, <code>cornerSubPix</code>) and solves the camera pose
+      (<code>solvePnPGeneric</code>, IPPE).</li>
+    <li><strong>2D pose.</strong> A person detector (YOLOX), a whole-body pose network (RTMW-x,
+      133 keypoints) and a hand network (RTMPose) run through the OpenCV 5 DNN engine
+      (<code>cv2.dnn</code>).</li>
+    <li><strong>Synchronization.</strong> The phones are not started together. The frame offset of
+      every camera is found from the motion itself: epipolar consistency and multi-view
+      reprojection on frames where both cameras see the person.</li>
+    <li><strong>Triangulation and smoothing.</strong> Views are fused with per-camera soft trust,
+      then a bidirectional Kalman/RTS smoother removes jitter while keeping fast motion fast.</li>
+    <li><strong>Export.</strong> The 3D skeleton is written as BVH for animation tools and game engines.</li>
+  </ol>
+</section>
+
+<section class="section" aria-labelledby="engine">
+  <h2 id="engine">Model inference timing (CPU)</h2>
+  <div class="scroll">
+    <table class="numeric">
+      <caption>Mean model inference time on a development laptop CPU.</caption>
+      <thead><tr><th scope="col">Model</th><th scope="col">OpenCV 5 DNN</th><th scope="col">ONNX Runtime</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">RTMW-x, 384 &times; 288</th><td>378 ms</td><td>520 ms</td></tr>
+        <tr><th scope="row">RTMPose hand, 256 &times; 256</th><td>73 ms</td><td>145 ms</td></tr>
+        <tr><th scope="row">YOLOX-Nano, 416 &times; 416</th><td>30 ms</td><td>97 ms</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section class="section" aria-labelledby="cloud">
+  <h2 id="cloud">Cloud deployment</h2>
+  <p>One script provisions the AWS stack.</p>
+  <dl class="spec">
+    <dt>Amazon CloudFront</dt><dd>HTTPS endpoint; the instance accepts traffic only from CloudFront.</dd>
+    <dt>Amazon EC2</dt><dd>m7i-flex.large (2 vCPU) runs this service and the pipeline on CPU.</dd>
+    <dt>Amazon S3</dt><dd>Code bundle, model weights, trials, precomputed results and run outputs.</dd>
+    <dt>AWS Systems Manager</dt><dd>Password in Parameter Store (SecureString); administration through Run Command, no SSH.</dd>
+    <dt>Amazon CloudWatch</dt><dd>Service and web-server logs; run and per-stage timing metrics.</dd>
+    <dt>AWS IAM</dt><dd>Instance role limited to the deployment bucket, one parameter path, one log group and one metric namespace.</dd>
+  </dl>
+</section>
+
+<section class="section" aria-labelledby="data">
+  <h2 id="data">Data</h2>
+  <p>The trials come from the OpenCap LabValidation dataset (Uhlrich et al., "OpenCap: Human
+    movement dynamics from smartphone videos", PLOS Computational Biology, 2023), released under
+    Apache-2.0. Its participants consented to public sharing of their videos. Ground truth is the
+    marker-based motion capture recorded in the same session.</p>
+</section>
+
+<section class="section" aria-labelledby="responsible">
+  <h2 id="responsible">Responsible use</h2>
+  <ul>
+    <li>This deployment shows only consented, publicly released videos and accepts no uploads.</li>
+    <li>The system estimates skeleton keypoints. It does not identify people.</li>
+    <li>Access is password protected and served over HTTPS. Live run outputs are deleted after 7 days.</li>
+  </ul>
+</section>
+{% endblock %}

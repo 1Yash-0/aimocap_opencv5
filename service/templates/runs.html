@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Live runs - AIMoCap{% endblock %}
+{% block content %}
+<h1>Live runs</h1>
+{% set show_cost = rows|selectattr("cost")|list|length > 0 %}
+<table>
+  <caption>Live runs on this server. Live-run outputs are deleted after 7 days.</caption>
+  <thead><tr>
+    <th scope="col">Run</th><th scope="col">Trial</th><th scope="col">Preset</th><th scope="col">Started (UTC)</th>
+    <th scope="col">Duration (s)</th><th scope="col">Status</th>{% if show_cost %}<th scope="col">Estimated cost (USD)</th>{% endif %}
+  </tr></thead>
+  <tbody>
+  {% for row in rows %}
+    <tr>
+      <th scope="row"><a href="/runs/{{ row.run.id }}">{{ row.run.id }}</a></th>
+      <td>{{ row.run.trial }}</td><td>{{ row.run.preset }}</td><td>{{ row.run.started or "" }}</td>
+      <td>{{ row.run.seconds if row.run.seconds is not none else "" }}</td>
+      <td><span class="status status-{{ row.run.status }}">{{ row.run.status }}</span></td>
+      {% if show_cost %}<td>{{ row.cost or "n/a" }}</td>{% endif %}
+    </tr>
+  {% else %}
+    <tr><td colspan="{{ 7 if show_cost else 6 }}">No runs yet.</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+<p><a href="/live">Start a live run</a></p>
+{% endblock %}

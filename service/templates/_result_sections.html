@@ -1,0 +1,194 @@
+{# Result sections shared by a precomputed result (trial.html) and a completed live run (run.html). #}
+{% set has_calibration = calibration or sync %}
+{% set is_walking = trial and trial.trial.lower().startswith("walking") %}
+<nav class="subnav" aria-label="On this page">
+  <ul>
+    {% if videos or character %}<li><a href="#videos">Videos</a></li>{% endif %}
+    {% if knee_svg %}<li><a href="#movement">Movement</a></li>{% endif %}
+    {% if accuracy %}<li><a href="#accuracy">Accuracy</a></li>{% endif %}
+    {% if has_calibration %}<li><a href="#calibration">Calibration</a></li>{% endif %}
+    <li><a href="#use">Use the motion</a></li>
+    <li><a href="#downloads">Downloads</a></li>
+  </ul>
+</nav>
+
+{% if videos or character %}
+<section id="videos" class="section" aria-labelledby="videos-title" data-video-group>
+  <h2 id="videos-title">Videos</h2>
+  {% if videos %}
+  <div class="video-toolbar" data-video-controls hidden>
+    <button class="secondary" type="button" data-play-all hidden>Play all</button>
+    <p data-video-status role="status" aria-live="polite"></p>
+  </div>
+  <div class="videos has-comparison">
+    <div class="video-source">
+    {% for name in videos if name == "overlay_2d.mp4" %}
+      <figure>
+        <video controls preload="metadata" src="/files/{{ kind }}/{{ key }}/{{ name }}">Your browser cannot play this video.</video>
+        <figcaption>2D keypoints on every camera after synchronization</figcaption>
+      </figure>
+    {% endfor %}
+    </div>
+    <div class="video-results">
+    {% for name in videos if name == "skeleton_vs_mocap.mp4" %}
+      <figure>
+        <video controls preload="metadata" src="/files/{{ kind }}/{{ key }}/{{ name }}">Your browser cannot play this video.</video>
+        <figcaption>3D skeleton from AIMoCap (green) over the marker motion capture (red), front and side views</figcaption>
+      </figure>
+    {% endfor %}
+    {% if character %}
+      <figure class="character">
+        <h3>Character preview</h3>
+        <video controls preload="metadata" src="/files/{{ kind }}/{{ key }}/{{ character }}">Your browser cannot play this video.</video>
+        <figcaption>The captured motion applied to Manny, rendered in Blender.</figcaption>
+      </figure>
+    {% endif %}
+    </div>
+  </div>
+  {% elif character %}
+  <div class="videos">
+    <div class="video-results">
+      <figure class="character">
+        <h3>Character preview</h3>
+        <video controls preload="metadata" src="/files/{{ kind }}/{{ key }}/{{ character }}">Your browser cannot play this video.</video>
+        <figcaption>The captured motion applied to Manny, rendered in Blender.</figcaption>
+      </figure>
+    </div>
+  </div>
+  {% endif %}
+</section>
+<script src="/static/videos.js" defer></script>
+{% endif %}
+
+{% if knee_svg %}
+<section id="movement" class="section" aria-labelledby="movement-title">
+  <h2 id="movement-title">Movement analysis</h2>
+  <p>Knee flexion through the trial, from the hip, knee and ankle joints. 0&deg; is a straight leg.</p>
+  <ul class="legend" aria-label="Chart key">
+    <li><span class="swatch swatch-ours-l" aria-hidden="true"></span>AIMoCap, left knee</li>
+    <li><span class="swatch swatch-ours-r" aria-hidden="true"></span>AIMoCap, right knee</li>
+    <li><span class="swatch swatch-mocap-l" aria-hidden="true"></span>Lab, left knee</li>
+    <li><span class="swatch swatch-mocap-r" aria-hidden="true"></span>Lab, right knee</li>
+  </ul>
+  {{ knee_svg }}
+  <table class="numeric">
+    <caption>Peak knee flexion (98th percentile of the trial) and {% if is_walking %}peak{% else %}mean{% endif %} left-right difference, in degrees.</caption>
+    <thead>
+      <tr><th scope="col">Source</th><th scope="col">Left peak (&deg;)</th><th scope="col">Right peak (&deg;)</th><th scope="col">{{ "Peak" if is_walking else "Mean" }} left-right difference (&deg;)</th></tr>
+    </thead>
+    <tbody>
+    {% for row in knee_rows %}
+      <tr><th scope="row">{{ row.source }}</th><td>{{ row.left }}</td><td>{{ row.right }}</td><td>{{ row.peak_difference if is_walking else row.asymmetry }}</td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  {% if knee_error %}
+  <p>The phones track the lab knee angle to within {{ knee_error }} degrees (median).</p>
+  {% endif %}
+  {% if not is_walking %}<p class="notice">For coaches and physiotherapists: a persistent left-right difference in peak flexion can indicate favouring one leg. This demo is not a medical device.</p>{% endif %}
+</section>
+{% endif %}
+
+{% if accuracy %}
+<section id="accuracy" class="section" aria-labelledby="accuracy-title">
+  <h2 id="accuracy-title">Accuracy against motion capture</h2>
+  <div class="scroll" role="region" aria-labelledby="accuracy-caption" tabindex="0">
+    <table class="numeric">
+      <caption id="accuracy-caption">Measured on 12 body joints (hips, knees, ankles, shoulders, elbows, wrists) against marker motion capture, with no time shift allowed.</caption>
+      <thead><tr>
+        <th scope="col">System</th><th scope="col">Cameras</th><th scope="col">Median (mm)</th><th scope="col">p95 (mm)</th>
+        <th scope="col">Acceleration error</th><th scope="col">Jitter, still frames</th><th scope="col">Fast-motion speed ratio</th>
+      </tr></thead>
+      <tbody>
+      {% for row in accuracy %}
+        <tr><th scope="row">{{ row.system }}</th><td>{{ row.cameras }}</td><td>{{ row.median }}</td><td>{{ row.p95 }}</td>
+          <td>{{ row.accel }}</td><td>{{ row.jitter }}</td><td>{{ row.speed }}</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <dl class="explain">
+    <dt>Median and p95</dt><dd>Typical and near-worst-case distance between our joints and the markers, in millimetres. Lower is better.</dd>
+    <dt>Acceleration error</dt><dd>How much the skeleton shakes compared with the real motion (mm per frame squared). Lower is smoother.</dd>
+    <dt>Jitter, still frames</dt><dd>The same, measured only while the person moves least, where shake is most visible.</dd>
+    <dt>Fast-motion speed ratio</dt><dd>How fast the skeleton moves during the fastest moments, relative to the real motion. 1.00 means fast movements are not slowed down by smoothing.</dd>
+  </dl>
+</section>
+{% endif %}
+
+{% if has_calibration %}
+<section id="calibration" class="section" aria-labelledby="calibration-title">
+  <h2 id="calibration-title">Calibration and synchronization</h2>
+  <div class="pair">
+    {% if calibration %}
+    <div>
+      <h3>Calibration</h3>
+      <table class="numeric">
+        <caption>Where each phone stands, computed with OpenCV 5 from a checkerboard, compared with the lab's own calibration. Reprojection: how far the board corners land from where they were seen, in pixels. Trials from the same session share one calibration (the same checkerboard recording).</caption>
+        <thead><tr><th scope="col">Camera</th><th scope="col">Rotation (deg)</th><th scope="col">Position (mm)</th><th scope="col">Reprojection (px)</th></tr></thead>
+        <tbody>
+        {% for row in calibration %}
+          <tr><th scope="row">{{ row.camera }}</th><td>{{ row.rotation }}</td><td>{{ row.position }}</td><td>{{ row.rms }}</td></tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% endif %}
+    {% if sync %}
+    <div>
+      <h3>Synchronization</h3>
+      <table class="numeric">
+        <caption>How many frames each phone started after Cam0, estimated from the movement. Truth comes from the motion capture. 1 frame = 1/60 s.</caption>
+        <thead><tr><th scope="col">Camera</th><th scope="col">Estimated</th><th scope="col">Truth</th><th scope="col">Error (frames)</th></tr></thead>
+        <tbody>
+        {% for row in sync %}
+          <tr><th scope="row">{{ row.camera }}</th><td>{{ row.estimated }}</td><td>{{ row.truth }}</td><td>{{ row.error }}</td></tr>
+        {% endfor %}
+        </tbody>
+      </table>
+      {% if is_walking %}
+      <p class="note">Walking repeats each step, so the mocap reference can be off by one step.</p>
+      {% endif %}
+    </div>
+    {% endif %}
+  </div>
+</section>
+{% endif %}
+
+<section id="use" class="section" aria-labelledby="use-title">
+  <h2 id="use-title">Use the motion in your project</h2>
+  <ol class="steps">
+    <li>Download {% if "motion.bvh" in downloads %}<a href="/files/{{ kind }}/{{ key }}/motion.bvh">motion.bvh</a>{% else %}motion.bvh{% endif %}, the motion in BVH format.</li>
+    <li>In Blender, choose File &gt; Import &gt; Motion Capture (.bvh). If the motion is the wrong size for your character, adjust the scale in the import options.</li>
+    <li>Retarget the motion onto your character in Blender, or with the Unreal Engine IK Retargeter.</li>
+    <li>In Unity, export an FBX from Blender and import it with its rig set to Humanoid.</li>
+  </ol>
+</section>
+
+<section id="downloads" class="section" aria-labelledby="downloads-title">
+  <h2 id="downloads-title">Downloads</h2>
+  {% if downloads %}
+  {% set notes = {
+    "motion.bvh": "the motion in BVH format, for Blender, Unreal Engine and Unity",
+    "skeleton3d.npz": "3D joint positions for every frame (NumPy archive)",
+    "metrics.json": "the scores and calibration shown on this page",
+    "calibration.json": "camera positions and orientations"
+  } %}
+  <ul class="downloads">
+  {% for name in downloads %}
+    <li><a href="/files/{{ kind }}/{{ key }}/{{ name }}">{{ name }}</a>{% if notes.get(name) %}, {{ notes.get(name) }}{% endif %}</li>
+  {% endfor %}
+  </ul>
+  {% else %}
+  <p>No files are available for this result.</p>
+  {% endif %}
+  {% if stages %}
+  <details>
+    <summary>Stage timings</summary>
+    <table class="numeric compact">
+      <caption>Seconds per pipeline stage</caption>
+      <tbody>{% for row in stages %}<tr><th scope="row">{{ row.stage }}</th><td>{{ row.seconds }}</td></tr>{% endfor %}</tbody>
+    </table>
+  </details>
+  {% endif %}
+</section>

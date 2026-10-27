@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Results - AIMoCap{% endblock %}
+{% block content %}
+<h1>Results</h1>
+<p class="lede">Each result runs the full pipeline on recorded phone video and is compared with the marker motion capture recorded in the same session.</p>
+
+{% for group in groups %}
+<section class="section" aria-labelledby="group-{{ group.key }}">
+  <h2 id="group-{{ group.key }}">{{ group.label }}</h2>
+  <ul class="cards">
+    {% for card in group.cards %}
+    <li class="card">
+      <h3><a href="/results/{{ card.trial.name }}">{{ card.trial.title }}</a></h3>
+      <dl class="facts">
+        <div><dt>Phones</dt><dd>{{ card.cameras }}</dd></div>
+        <div><dt>Median joint error</dt><dd>{{ card.headline.median }} mm <span>OpenCap: {{ card.headline.opencap_median }} mm</span></dd></div>
+        <div><dt>Acceleration error</dt><dd>{{ card.headline.accel }} <span>OpenCap: {{ card.headline.opencap_accel }} (lower is smoother)</span></dd></div>
+      </dl>
+    </li>
+    {% endfor %}
+  </ul>
+</section>
+{% else %}
+<p>No results are published yet.</p>
+{% endfor %}
+{% endblock %}

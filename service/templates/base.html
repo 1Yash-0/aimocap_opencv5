@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}AIMoCap{% endblock %}</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap bar">
+      <a class="brand" href="/">AIMoCap</a>
+      <nav aria-label="Main">
+        <ul class="nav">
+          <li><a href="/"{% if current == "overview" %} aria-current="page"{% endif %}>Overview</a></li>
+          <li><a href="/results"{% if current == "results" %} aria-current="page"{% endif %}>Results</a></li>
+          <li><a href="/live"{% if current == "live" %} aria-current="page"{% endif %}>Try it live</a></li>
+          <li><a href="/about"{% if current == "about" %} aria-current="page"{% endif %}>How it works</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+  <main id="main" class="wrap">
+    {% block content %}{% endblock %}
+  </main>
+  <footer class="site-footer">
+    <div class="wrap">
+      <p>Dataset: OpenCap LabValidation (Uhlrich et al., PLOS Computational Biology, 2023), Apache-2.0. Participants consented to public sharing of their videos.</p>
+    </div>
+  </footer>
+  {% block scripts %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block title %}{{ trial.title if trial else key }} - AIMoCap{% endblock %}
+{% block content %}
+<h1>{{ trial.title if trial else key }}</h1>
+{% if session %}
+<p class="meta">{{ session.cameras }} phones, {{ session.fps }} frames per second, {{ session.seconds }} s of synchronized video. Precomputed full run.</p>
+{% endif %}
+{% include "_result_sections.html" %}
+{% endblock %}

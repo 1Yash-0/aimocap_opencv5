@@ -1,0 +1,15 @@
+# Pinned CUDA 12 runtime dependencies (mirrors the base dependencies and the `gpu` extra).
+# Install with: python -m pip install -r requirements-gpu.txt
+opencv-python==5.0.0.93
+numpy==2.5.3
+scipy==1.18.1
+pillow==12.3.0
+matplotlib==3.11.2
+imageio-ffmpeg==0.6.0
+onnxruntime-gpu==1.20.2
+nvidia-cuda-runtime-cu12==12.9.79
+nvidia-cuda-nvrtc-cu12==12.9.86
+nvidia-cublas-cu12==12.9.2.10
+nvidia-cufft-cu12==11.4.1.4
+nvidia-cudnn-cu12==9.27.0.42
+nvidia-nvjitlink-cu12==12.9.86

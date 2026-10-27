@@ -1,0 +1,16 @@
+{
+  "name": "AIMoCap CLI usable-clip contract",
+  "version": "1.0.0",
+  "status": "calibrated_corpus_v1",
+  "procedure": "Bands calibrated 2026-10-01 from the measured post-P2 full-corpus run (n=4 controlled windows; pose1_narrow_hard blocked_data, user slot pending). finite_coverage_min=0.90 sits below the minimum healthy BODY-joint coverage observed (0.964); slide_p95_max_cm_s=120 sits above the maximum healthy-case foot slide observed (93.0, pose1_calm left). Coverage uses BODY-joint GT-backed fraction (accuracy.coverage), not the all-133 triangulation fraction, because the latter conflates face/hand observability with body usability (pose3_legs: tri 0.406 vs body 0.999 with stable feet). Sample is small: bands are honest but provisional in spirit; recalibrate when user footage lands.",
+  "calibration_evidence": {
+    "n_cases": 4,
+    "body_coverage_observed": [0.964, 0.974, 0.98, 0.999],
+    "slide_p95_healthy_max": 93.0,
+    "report": "outputs/spark_p3_corpus/report_p3.json"
+  },
+  "bands": {
+    "finite_coverage_min": 0.9,
+    "slide_p95_max_cm_s": 120.0
+  }
+}

@@ -1,0 +1,148 @@
+{% extends "base.html" %}
+{% block title %}AIMoCap: motion capture from the phones you already own{% endblock %}
+{% block content %}
+<section class="hero" aria-labelledby="hero-title">
+  <h1 id="hero-title">Motion capture from the phones you already own</h1>
+  <p class="lede">AIMoCap turns video from 3–5 unsynchronized phones into accurate, smooth 3D motion with 133 body, hand and face points, checked against lab motion capture.</p>
+  <div class="actions">
+    <a class="button" href="/results">See the results</a>
+    <a class="button secondary" href="/live">Run it live</a>
+  </div>
+</section>
+
+{% if active %}
+<p class="notice" role="status">A run is in progress: <a href="/runs/{{ active.id }}">follow it live</a>.</p>
+{% endif %}
+
+<section class="section" aria-labelledby="problem">
+  <h2 id="problem">The problem</h2>
+  <div class="columns">
+    <div>
+      <h3>Studios are out of reach</h3>
+      <p>Optical motion capture needs a dedicated lab, markers on the body and an operator. The equipment alone costs more than USD 150,000 (Uhlrich et al., 2023).</p>
+    </div>
+    <div>
+      <h3>One camera is not enough</h3>
+      <p>Single-camera AI apps estimate depth from one view, so the motion drifts and shakes.</p>
+    </div>
+    <div>
+      <h3>So most people go without</h3>
+      <p>Indie game developers, animators, physiotherapists and coaches are left without a practical way to capture motion.</p>
+    </div>
+  </div>
+</section>
+
+<section class="section" aria-labelledby="who">
+  <h2 id="who">Who it is for</h2>
+  <ul class="cards">
+    <li class="card">
+      <h3>Game developers and animators</h3>
+      <p>Skeleton motion as BVH, ready for Blender, Unreal Engine and Unity.</p>
+      {% if links.use %}<p><a href="/results/{{ links.use.name }}#use">See the steps and the BVH file</a></p>{% endif %}
+    </li>
+    <li class="card">
+      <h3>Physiotherapists and coaches</h3>
+      <p>Knee flexion through a movement, and whether both legs move alike.</p>
+      {% if links.movement %}<p><a href="/results/{{ links.movement.name }}#movement">See knee flexion and left-right symmetry</a></p>{% endif %}
+    </li>
+    <li class="card">
+      <h3>Researchers</h3>
+      <p>How close phone capture comes to marker-based lab capture on the same trial.</p>
+      {% if links.accuracy %}<p><a href="/results/{{ links.accuracy.name }}#accuracy">See the accuracy table</a></p>{% endif %}
+    </li>
+  </ul>
+</section>
+
+<section class="section" aria-labelledby="compare">
+  <h2 id="compare">Compared with the alternatives</h2>
+  <div class="scroll" role="region" aria-labelledby="compare-caption" tabindex="0">
+    <table class="compare">
+      <caption id="compare-caption">Lab motion capture, single-camera AI apps and AIMoCap, compared on the points that matter for a small team.</caption>
+      <thead>
+        <tr>
+          <th scope="col"><span class="visually-hidden">Feature</span></th>
+          <th scope="col">Lab motion capture</th>
+          <th scope="col">Single-camera AI apps</th>
+          <th scope="col" class="ours">AIMoCap</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><th scope="row">Hardware</th><td>Dedicated infrared cameras</td><td>One phone or webcam</td><td class="ours">3–5 ordinary phones</td></tr>
+        <tr><th scope="row">Markers on the body</th><td>Yes</td><td>No</td><td class="ours">No</td></tr>
+        <tr><th scope="row">3D</th><td>Measured</td><td>Estimated from one view</td><td class="ours">Triangulated from several views</td></tr>
+        <tr><th scope="row">Accuracy against lab capture</th><td>Reference</td><td>Not evaluated here</td><td class="ours">{% if stats.median %}{{ stats.median }} mm median{% else %}Not yet measured{% endif %}</td></tr>
+        <tr><th scope="row">Hands and face</th><td>Extra setup</td><td>Varies</td><td class="ours">133 keypoints</td></tr>
+        <tr><th scope="row">Clock sync and calibration</th><td>Hardware</td><td>Not needed</td><td class="ours">Automatic, from a checkerboard and the motion</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section class="section band" aria-labelledby="measured">
+  <h2 id="measured">Measured on recorded trials</h2>
+  {% if stats.trials %}
+  <p>Figures across the {{ stats.trials }} recorded {{ "trial" if stats.trials == 1 else "trials" }} with published results. Each one is compared with marker motion capture recorded in the same session.</p>
+  <dl class="strip">
+    <div>
+      <dt>Joint position error, median</dt>
+      <dd class="value">{{ stats.median or "n/a" }} mm</dd>
+      <dd class="detail">AIMoCap. OpenCap with 5 cameras: {{ stats.opencap_median or "n/a" }} mm.</dd>
+    </div>
+    <div>
+      <dt>Acceleration error</dt>
+      <dd class="value">{{ stats.accel or "n/a" }}</dd>
+      <dd class="detail">AIMoCap, in mm per frame squared. OpenCap with 5 cameras: {{ stats.opencap_accel or "n/a" }}. Lower is smoother.</dd>
+    </div>
+    <div>
+      <dt>Largest calibration error</dt>
+      <dd class="value">{{ stats.calib_deg or "n/a" }}&deg; and {{ stats.calib_mm or "n/a" }} mm</dd>
+      <dd class="detail">Rotation and position, over all cameras and trials{% if stats.calib_limit_deg %}, against acceptance limits of {{ stats.calib_limit_deg }}&deg; and {{ stats.calib_limit_mm }} mm{% endif %}.</dd>
+    </div>
+    <div>
+      <dt>Sync: squats and sit-to-stand</dt>
+      <dd class="value">{{ stats.sync_frames or "n/a" }} {{ "frame" if stats.sync_frames == "1" else "frames" }}</dd>
+      <dd class="detail">Largest difference from resolved mocap references at 60 fps, across these movements.</dd>
+    </div>
+  </dl>
+  {% if stats.unresolved %}
+  <p>{{ stats.unresolved }} {{ "camera" if stats.unresolved == 1 else "cameras" }} in {{ stats.unresolved_trials }} {{ "trial" if stats.unresolved_trials == 1 else "trials" }} {{ "has an unresolved mocap-derived synchronization reference" if stats.unresolved == 1 else "have unresolved mocap-derived synchronization references" }}; the pipeline still estimated camera offsets.</p>
+  {% endif %}
+  {% if stats.walking_trials %}<p class="note">Walking repeats each step, so its mocap timing reference can be off by one step.</p>{% endif %}
+  {% else %}
+  <p>No results are published yet.</p>
+  {% endif %}
+</section>
+
+<section class="section band" aria-labelledby="cv5-measured">
+  <h2 id="cv5-measured">OpenCV 5, measured</h2>
+  <p>Measured on a development laptop CPU: OpenCV 5 DNN versus ONNX Runtime.</p>
+  <p class="meta">Parity used pre-cropped views with detection disabled. The board result is a separate calibration check.</p>
+  <div class="scroll">
+    <table class="numeric compact">
+      <thead><tr><th scope="col">Check</th><th scope="col">Result</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">RTMW-x, per crop</th><td>378 ms vs 520 ms</td></tr>
+        <tr><th scope="row">Body-keypoint difference</th><td>max 0.005 px (60 frames &times; 2 views)</td></tr>
+        <tr><th scope="row">Checkerboard detection</th><td>90 / 90 calibration clips</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section class="section" aria-labelledby="how">
+  <h2 id="how">How it works</h2>
+  <ol class="steps">
+    <li><strong>Find the cameras.</strong> OpenCV 5 finds a checkerboard in each phone's video and works out where each phone stands and points.</li>
+    <li><strong>Find the person.</strong> Three neural networks run by the OpenCV 5 DNN engine find 133 points on the body, hands and face in every frame of every phone.</li>
+    <li><strong>Line up the clocks.</strong> The phones start at different times. AIMoCap finds each phone's delay from the movement itself.</li>
+    <li><strong>Build the 3D skeleton.</strong> The views are fused into 3D, and a smoother removes shake without slowing fast movements.</li>
+    <li><strong>Export.</strong> The motion is saved as BVH, a standard animation file for Blender, Unreal Engine, Unity and similar tools.</li>
+  </ol>
+  <figure class="architecture-figure">
+    <img src="/static/architecture.png" alt="AIMoCap processing flow from phone video through calibration, pose estimation, synchronization, 3D reconstruction and export" width="1657" height="907" loading="lazy">
+    <figcaption>Pipeline and AWS deployment. Only live-run outputs expire after 7 days.</figcaption>
+  </figure>
+  <p>Close to OpenCap on position error, with lower low-motion jitter and added hand and face tracking.</p>
+  <p><a href="/about">How the method works and the cloud setup</a></p>
+</section>
+{% endblock %}

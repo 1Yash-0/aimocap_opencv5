@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}{{ trial.title if trial else key }} - AIMoCap{% endblock %}
+{% block content %}
+<h1>{{ trial.title if trial else key }}</h1>
+<p class="meta">Live run {{ run.id }} &middot; preset {{ preset.label if preset else run.preset }}{% if preset %} ({{ preset.description }}){% endif %}</p>
+
+<section id="progress-section" aria-labelledby="progress" data-run="{{ run.id }}" data-status="{{ run.status }}">
+  <h2 id="progress">Progress</h2>
+  <p id="run-status" class="status status-{{ run.status }}" role="status" aria-live="polite">Status: {{ run.status }}{% if progress.elapsed is not none %} ({{ progress.elapsed|round|int }} s){% endif %}</p>
+  <table class="numeric">
+    <caption>Pipeline stages</caption>
+    <thead><tr><th scope="col">Stage</th><th scope="col">Status</th><th scope="col">Seconds</th></tr></thead>
+    <tbody id="stage-rows">
+    {% for stage in progress.stages %}
+      <tr><th scope="row">{{ stage.stage }}</th><td>{{ stage.status }}</td><td>{{ "%.1f"|format(stage.seconds) if stage.seconds is not none else "" }}</td></tr>
+    {% else %}
+      <tr><td colspan="3">Waiting for the first stage&hellip;</td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  <details>
+    <summary>Log</summary>
+    <pre id="log-tail">{{ progress.log_tail|join("\n") }}</pre>
+  </details>
+  {% if run.status == "failed" and run.error %}<p class="error">{{ run.error }}</p>{% endif %}
+</section>
+
+{% if run.status == "completed" %}
+  {% if session %}
+  <p class="meta">{{ session.cameras }} phones, {{ session.fps }} frames per second, {{ session.seconds }} s of synchronized video.</p>
+  {% endif %}
+  {% include "_result_sections.html" %}
+{% endif %}
+{% endblock %}
+{% block scripts %}{% if run.status in ("queued", "running") %}<script src="/static/run.js"></script>{% endif %}{% endblock %}

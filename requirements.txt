@@ -1,0 +1,15 @@
+# Pinned CPU runtime and web-service dependencies (mirrors the `cpu` and `service` extras).
+# Install with: python -m pip install -r requirements.txt
+opencv-python==5.0.0.93
+numpy==2.5.3
+scipy==1.18.1
+pillow==12.3.0
+matplotlib==3.11.2
+imageio-ffmpeg==0.6.0
+onnxruntime==1.20.1
+fastapi==0.141.1
+uvicorn[standard]==0.53.0
+jinja2==3.1.6
+python-multipart==0.0.32
+boto3==1.43.118
+httpx==0.28.1

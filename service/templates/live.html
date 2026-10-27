@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}Try it live - AIMoCap{% endblock %}
+{% block content %}
+<h1>Try it live</h1>
+<p class="lede">A quick live run estimates body keypoints with OpenCV 5 DNN from 2 seconds of video from 3 phones on the server's 2 CPU cores. It takes about 6 to 7 minutes. Full 5-camera results also include hands and face tracking.</p>
+
+{% if cost %}
+<p class="meta">Estimated cost per run: USD {{ cost }} (estimate based on the on-demand EC2 list price).</p>
+{% endif %}
+
+{% if active %}
+<p class="notice" role="status">A run is in progress: <a href="/runs/{{ active.id }}">follow it live</a>. New runs can start when it finishes.</p>
+{% endif %}
+
+<section class="section" aria-labelledby="choose">
+  <h2 id="choose">Choose a trial</h2>
+  {% if trials %}
+  <ul class="run-list">
+    {% for trial in trials %}
+    <li class="run-option">
+      <h3 id="run-{{ trial.name }}">{{ trial.title }}</h3>
+      <p class="meta">{{ preset.description }}.</p>
+      <form method="post" action="/runs">
+        <input type="hidden" name="trial" value="{{ trial.name }}">
+        <input type="hidden" name="preset" value="{{ preset.name }}">
+        <button type="submit" aria-label="Run live: {{ trial.title }}"{% if active %} disabled{% endif %}>Run live</button>
+      </form>
+    </li>
+    {% endfor %}
+  </ul>
+  {% else %}
+  <p>No trials are installed on this server.</p>
+  {% endif %}
+  <p><a href="/runs">All runs and their outputs</a></p>
+</section>
+{% endblock %}
